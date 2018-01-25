@@ -31,6 +31,7 @@ func formatHostPort(host string, port int) string {
 func New(host string, port int) *Mailago {
   r := mux.NewRouter()
   r.HandleFunc("/health", healthHandler)
+  r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
   s := &http.Server{
     Handler:      handlers.RecoveryHandler()(r),

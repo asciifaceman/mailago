@@ -1,7 +1,11 @@
-FROM ubuntu:trusty
+FROM golang:1.8 as builder
+WORKDIR /go/src/github.com/asciifaceman/mailago
+RUN mkdir /dist
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /dist/mailago-linux-x86 .
 
-#RUN apt-get update && apt-get install -y ca-certificates
+FROM scratch
+COPY --from=builder /dist/mailago-linux-x86 /bin/mailago
+ENV PATH=/bin
 
-add target/mailago mailago
-
-ENTRYPOINT ["./mailago"]
+ENTRYPOINT ["/bin/mailago", "run"]

@@ -32,7 +32,7 @@ COLOR_INDENT = \
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all buildosx build
+.PHONY: help all frontend buildosx build
 
 ## MailaGo Make
 ## 
@@ -41,7 +41,8 @@ COLOR_INDENT = \
 help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//' #thanks githuh.com/prwhite
 
-all: | clean buildosx ## Clean and build osx
+all: | clean build ## Clean and build osx
+	echo "Not building frontend. (in case you don't have npm)"
 
 docker: ## build docker image
 	docker build -t $(NAME):$(VERSION) .
@@ -49,8 +50,15 @@ docker: ## build docker image
 run: ## Run mailago
 	@go run main.go run
 
-deploy: ## Deploy to local docker. Must have docker installed and docker-compose
-	docker-compose up #--build -d
+frontend:
+	echo "Building frontend ..."
+	npm run build --prefix frontend/
+	-@rm -r static
+	-@mkdir static
+	@cp -R frontend/build/* static/
+
+deploy: | all ## Deploy to local docker. Must have docker installed and docker-compose
+	docker-compose up --build -d
 
 destroy: ## Destroy cluster deployed from this docker compose file.
 	docker-compose down
@@ -68,5 +76,6 @@ buildosx: ## build osx executable
 
 build: ## build linux executable
 	echo "Building target/mailago ..."
-	@GOOS=linux GOARCH=amd64 go build target/mailago
+	@GOOS=linux GOARCH=amd64 go build -o target/mailago
 	echo "Done."
+

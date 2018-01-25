@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	defaultHost = "localhost"
+	defaultHost = "0.0.0.0"
 	defaultPort = 3031
 )
 
