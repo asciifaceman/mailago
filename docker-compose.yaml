@@ -1,0 +1,7 @@
+version: '3'
+services:
+  mailago:
+    build:
+      context: .
+    ports:
+      - "8080:3031"

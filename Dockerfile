@@ -1,7 +1,7 @@
 FROM ubuntu:trusty
 
-RUN apt-get update && apt-get install -y ca-certificates
+#RUN apt-get update && apt-get install -y ca-certificates
 
-add mailago mailago
+add target/mailago mailago
 
 ENTRYPOINT ["./mailago"]
