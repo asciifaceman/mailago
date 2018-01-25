@@ -16,11 +16,14 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
+	"github.com/asciifaceman/mailago/mailago"
 	"github.com/spf13/cobra"
 )
 
-const (
+var (
+	defaultHost = "localhost"
 	defaultPort = 3031
 )
 
@@ -35,12 +38,18 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("run called")
+
+		log.Print(fmt.Sprintf("Launching Mailago on %s:%d", defaultHost, defaultPort))
+		mail := mailago.New(defaultHost, defaultPort)
+		log.Fatal(mail.Srv.ListenAndServe())
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(runCmd)
+	runCmd.Flags().StringVarP(&defaultHost, "host", "H", defaultHost, "Start Mailago server. default host is localhost")
+	runCmd.Flags().IntVarP(&defaultPort, "port", "p", defaultPort, "Start Mailago server. default port is 3031")
 
 	// Here you will define your flags and configuration settings.
 

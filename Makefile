@@ -47,7 +47,7 @@ docker: ## build docker image
 	docker build -t $(NAME):$(VERSION) .
 
 run: ## Run mailago
-	go run main.go run
+	@go run main.go run
 
 deploy: ## Deploy to local docker. Must have docker installed and docker-compose
 	docker-compose up #--build -d
