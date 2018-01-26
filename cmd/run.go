@@ -23,8 +23,9 @@ import (
 )
 
 var (
-	defaultHost = "0.0.0.0"
-	defaultPort = 3031
+	defaultHost   = "0.0.0.0"
+	defaultPort   = 3031
+	defaultStatic = "./static"
 )
 
 // runCmd represents the run command
@@ -39,8 +40,8 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		log.Print(fmt.Sprintf("Launching Mailago on %s:%d", defaultHost, defaultPort))
-		mail := mailago.New(defaultHost, defaultPort)
+		log.Print(fmt.Sprintf("Launching Mailago on %s:%d using [%s] as static content directory.", defaultHost, defaultPort, defaultStatic))
+		mail := mailago.New(defaultHost, defaultPort, defaultStatic)
 		log.Fatal(mail.Srv.ListenAndServe())
 
 	},
@@ -50,6 +51,7 @@ func init() {
 	rootCmd.AddCommand(runCmd)
 	runCmd.Flags().StringVarP(&defaultHost, "host", "H", defaultHost, "Start Mailago server. default host is localhost")
 	runCmd.Flags().IntVarP(&defaultPort, "port", "p", defaultPort, "Start Mailago server. default port is 3031")
+	runCmd.Flags().StringVarP(&defaultStatic, "staticdir", "s", defaultStatic, "Start Mailago server. Default static dir is ./static (/static in docker)")
 
 	// Here you will define your flags and configuration settings.
 

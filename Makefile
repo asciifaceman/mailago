@@ -42,7 +42,7 @@ help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//' #thanks githuh.com/prwhite
 
 all: | clean build ## Clean and build osx
-	echo "Not building frontend. (in case you don't have npm)"
+	@echo "Not building frontend. (in case you don't have npm)"
 
 docker: ## build docker image
 	docker build -t $(NAME):$(VERSION) .
@@ -51,13 +51,13 @@ run: ## Run mailago
 	@go run main.go run
 
 frontend:
-	echo "Building frontend ..."
+	@echo "Building frontend ..."
 	npm run build --prefix frontend/
 	-@rm -r static
 	-@mkdir static
 	@cp -R frontend/build/* static/
 
-deploy: | all ## Deploy to local docker. Must have docker installed and docker-compose
+deploy: ## Deploy to local docker. Must have docker installed and docker-compose
 	docker-compose up --build -d
 
 destroy: ## Destroy cluster deployed from this docker compose file.
@@ -70,12 +70,12 @@ clean: ## clean target directory
 	-rm -r target
 
 buildosx: ## build osx executable
-	echo "Building target/mailago ..."
+	@echo "Building target/mailago ..."
 	@GOOS=darwin GOARCH=amd64 go build -o target/mailago
-	echo "Done."
+	@echo "Done."
 
 build: ## build linux executable
-	echo "Building target/mailago ..."
+	@echo "Building target/mailago ..."
 	@GOOS=linux GOARCH=amd64 go build -o target/mailago
-	echo "Done."
+	@echo "Done."
 

@@ -28,10 +28,10 @@ func formatHostPort(host string, port int) string {
 }
 
 // New returns an instance of Mailago
-func New(host string, port int) *Mailago {
+func New(host string, port int, staticdir string) *Mailago {
   r := mux.NewRouter()
   r.HandleFunc("/health", healthHandler)
-  r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+  r.PathPrefix("/").Handler(http.FileServer(http.Dir(staticdir)))
 
   s := &http.Server{
     Handler:      handlers.RecoveryHandler()(r),
