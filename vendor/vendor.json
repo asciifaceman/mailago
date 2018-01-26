@@ -165,6 +165,12 @@
 			"revisionTime": "2017-12-24T20:31:28Z"
 		},
 		{
+			"checksumSHA1": "oFION+ZSb6Vb+uITOOLUzVfawE0=",
+			"path": "gopkg.in/mailgun/mailgun-go.v1",
+			"revision": "a4002e2df2e8ca2da6a6fbb4a72871b504e49f50",
+			"revisionTime": "2017-02-13T15:09:30Z"
+		},
+		{
 			"checksumSHA1": "qOmvuDm+F+2nQQecUZBVkZrTn6Y=",
 			"path": "gopkg.in/yaml.v2",
 			"revision": "d670f9405373e636a5a2765eea47fac0c9bc91a4",

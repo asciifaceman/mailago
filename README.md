@@ -8,6 +8,14 @@ A very basic insecure mailer API.
 - Written for `go1.8.3`
 - Frontend development requires `npm` for dependencies and scripts. Not required to use Mailago (just convenient)
 
+##### Mailgun
+```
+export MG_API_KEY=your-api-key
+export MG_DOMAIN=your-domain
+export MG_PUBLIC_API_KEY=your-public-key
+export MG_URL="https://api.mailgun.net/v3"
+```
+
 ##### Development & Quick Start
 - `make run`
 - http://localhost:3031

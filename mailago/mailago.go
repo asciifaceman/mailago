@@ -23,6 +23,14 @@ type ResponseMessage struct {
   Body   string
 }
 
+// EmailPayload represents an email structure
+type EmailPayload struct {
+  Sender    string
+  Subject   string
+  Body      string
+  Recipient string
+}
+
 func formatHostPort(host string, port int) string {
   return fmt.Sprintf("%s:%d", host, port)
 }
@@ -46,12 +54,16 @@ func New(host string, port int, staticdir string) *Mailago {
   }
 }
 
+func sendMailgun(payload EmailPayload) {
+
+}
+
 func healthHandler(w http.ResponseWriter, r *http.Request) {
   log.Print("Health hit")
   rem := ResponseMessage{Status: "Ok", Body: "Server Living."}
   mess, err := json.Marshal(rem)
   if err != nil {
-    panic(err.Error())
+    http.Error(w, err.Error(), http.StatusInternalServerError)
     return
   }
 
