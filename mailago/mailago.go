@@ -82,8 +82,6 @@ func New(host string, port int, staticdir string) *Mailago {
   r := mux.NewRouter()
   r.HandleFunc("/health", healthHandler).Methods("GET")
   r.HandleFunc("/send", sendHandler).Methods("POST")
-  //r.HandleFunc("/send/mailgun", mailgunHandler).Methods("POST")
-  //r.HandleFunc("/send/sendgrid", sendgridHandler)
   r.PathPrefix("/").Handler(http.FileServer(http.Dir(staticdir)))
 
   s := &http.Server{
@@ -220,33 +218,6 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
   rem := ResponseMessage{Status: "Ok", Body: "Message has been successfully sent."}
   respondJSON(w, 200, rem)
   return
-
-}
-
-func mailgunHandler(w http.ResponseWriter, r *http.Request) {
-  defer r.Body.Close()
-  body, err := ioutil.ReadAll(r.Body)
-  if err != nil {
-    log.Print(err.Error())
-  }
-  payload := &EmailPayload{}
-  err = json.Unmarshal(body, payload)
-  if err != nil {
-    log.Print(err.Error())
-  }
-  err = validateEmailInput(payload)
-  if err != nil {
-    respondError(w, 400, err)
-    return
-  }
-  err = sendMailgun(payload)
-  if err != nil {
-    respondError(w, 400, err)
-    return
-  }
-  rem := ResponseMessage{Status: "Ok", Body: "Message sent to mailgun."}
-  log.Printf("Sent email: %v", payload)
-  respondJSON(w, 200, rem)
 
 }
 
