@@ -28,23 +28,9 @@ or update docker-compose.yaml for `make deploy`.
 ```
 
 ##### Development & Quick Start
+- Set env vars
 - `make run`
 - http://localhost:3031
-    - for frontend see below, otherwise you can `curl` the API
-
-##### Front-end Development
-
-- Development
-    - `cd frontend`
-    - `npm start`
-    - Develop some stuff
-- Deploy / Build
-    - `make frontend`
-        - Builds react project and places static content in `./static`
-        - This will work with `go run main.go run` but is not required for Mailago
-    - `make deploy`
-        - Adds `./static` to `/static` in Docker image
-        - Also deploys the whole application to docker using docker-compose
 
 ##### Build
 - Linux
@@ -54,28 +40,29 @@ or update docker-compose.yaml for `make deploy`.
 
 ##### Deploy
 - Requires docker-compose & docker
+- Make sure to add your mailgun & sendgrid information to docker-compose.yaml
 - `make deploy`
-- http://localhost:8080 or see API below for `curl`
+- `curl http://localhost:8080/health` to check if it is running properly and to check env vars
 
-##### API (todo)
-You can utilize `/etc/hosts` to fake an outage:
-- Mailgun
+MANUALLY:
+- Requires docker-compose & docker
+- Make sure to add your mailgun & sendgrid information to docker-compose.yaml
+- `docker-compose -f docker-compose.yaml up --build`
+- `curl http://localhost:8080/health` to check if it is running properly and to check env vars
+
+##### API
+
+- You can utilize `/etc/hosts` to fake an outage:
     - `127.0.0.1    api.mailgun.net`
+    - `127.0.0.1    api.sendgrid.com`
 - POST
     - `/send`
         - Sends an email using Mailgun, however if an error is met, will attempt Sendgrid.
         - REQUIRED: `From, To, Subject, Body`
-        - EX: `curl -d '{"From": "tester@mailago.io", "To": "tester@gmail.com"a test email."}' -H "Content-Type: application/json"  -X POST localhost:3031/send`
-    - `/send/mailgun` Deprecated
-        - Utilizes the mailgun API to send an email. Will not retry.
-        - REQUIRED: `From, To, Subject, Body`
-        - EX: `curl -d '{"From": "tester@mailago.io", "To": "tester@gmail.com"a test email."}' -H "Content-Type: application/json"  -X POST localhost:3031/send/mailgun`
-    - `/send/sendgrid` Deprecated
-        - Utilizes the sendgrid API to send an email. Will not retry.
-        - REQUIRED: `From, To, Subject, Body`
-        - EX: `curl -d '{"From": "tester@mailago.io", "To": "tester@gmail.com"a test email."}' -H "Content-Type: application/json"  -X POST localhost:3031/send/sendgrid`
+        - Ex: 
+        ```
+        curl -d '{"From": "tester@mailago.io", "To": "you@gmail.com", "Subject": "Test email", "Body": "This is just a test email."}' -H "Content-Type: application/json"  -X POST localhost:8080/send
+        ```
 - GET
-    - `/` & `/#/dashboard`
-        - Frontend UI (if applicable)
     - `/health`
-        - Returns the status of mailer APIs used by Mailago
+        - Returns status of Mailago and checks if ENV VARs are set.

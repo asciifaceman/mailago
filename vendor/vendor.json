@@ -123,6 +123,12 @@
 			"revisionTime": "2018-01-25T18:17:47Z"
 		},
 		{
+			"checksumSHA1": "S8+5XJgd+oHImvyXkSQMZNPCi9w=",
+			"path": "github.com/sendgrid/sendgrid-go/helpers/mail",
+			"revision": "0337b42f319971718a41b30894669547cc6414c3",
+			"revisionTime": "2018-01-25T18:17:47Z"
+		},
+		{
 			"checksumSHA1": "umqi64T6UOIS3NLueQsjLjjqbuM=",
 			"path": "github.com/sendgrid/smtpapi-go",
 			"revision": "cf3604db67f421412c13b1e6956b0e5912758187",

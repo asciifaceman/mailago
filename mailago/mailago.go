@@ -199,7 +199,7 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
 
   err = sendSG(payload, w)
   if err != nil {
-    log.Print(fmt.Errorf("could not send via sendgun: [%v]. complete failure", err.Error()))
+    log.Print(fmt.Errorf("could not send via Sendgrid: [%v]. complete failure", err.Error()))
     respondError(w, 500, err)
     return
   }
