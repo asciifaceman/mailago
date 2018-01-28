@@ -1,6 +1,6 @@
 # MailaGo [![Build Status](https://travis-ci.org/asciifaceman/mailago.svg?branch=master)](https://travis-ci.org/asciifaceman/mailago)
 
-A very basic insecure mailer API.
+A very basic, naive, insecure mailer API with automatic failover.
 
 ##### Setup
 - `go get -u github.com/kardianos/govendor` if necessary
@@ -8,11 +8,12 @@ A very basic insecure mailer API.
 - Written for `go1.8.3`
 - Frontend development requires `npm` for dependencies and scripts. Not required to use Mailago (just convenient)
 
-##### Mailgun
+##### Mailgun & Sendgrid
 ```
 export MAILGUN_DOMAIN=yourdomain
 export MAILGUN_API_KEY=yourkey
 export MAILGUN_PUB_KEY=yourkey
+export SENDGRID_KEY=sendgridapikey
 ```
 or add to docker-compose.yaml for `make deploy`.
 `personal-docker-compose.yaml` is added to .gitignore so you can `cp docker-compose.yaml personal-docker-compose.yaml` to add your environment variables:

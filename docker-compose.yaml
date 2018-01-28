@@ -5,3 +5,9 @@ services:
       context: .
     ports:
       - "8080:3031"
+    environment:
+      - MAILGUN_API_KEY=key-
+      - MAILGUN_PUB_KEY=pubkey-
+      - MAILGUN_DOMAIN=sandboxXXXX.mailgun.org
+      - SENDGRID_USER=username
+      - SENDGRID_KEY=APIKey

@@ -8,10 +8,13 @@ import (
   "log"
   "net/http"
   "os"
+  "strings"
   "time"
 
   "github.com/gorilla/handlers"
   "github.com/gorilla/mux"
+  sendgrid "github.com/sendgrid/sendgrid-go"
+  "github.com/sendgrid/sendgrid-go/helpers/mail"
   mailgun "gopkg.in/mailgun/mailgun-go.v1"
 )
 
@@ -83,28 +86,7 @@ func New(host string, port int, staticdir string) *Mailago {
   }
 }
 
-func sendMailgun(payload *EmailPayload, w http.ResponseWriter) error {
-  mg, err := newMailgun()
-  if err != nil {
-    msg := fmt.Sprintf("There was an error in setting up the Mailgun connection: %v", err.Error())
-    log.Print(msg)
-    return fmt.Errorf("Mailgun connection failed: %v", msg)
-  }
-
-  msg, id, err := mg.Send(mg.NewMessage(payload.From, payload.Subject, payload.Body, payload.To))
-  if err != nil {
-    msg := fmt.Sprintf("Could not send message: %v, ID %v, %+v", err, id, msg)
-    log.Print(msg)
-    return fmt.Errorf("Mailgun send failed: %v", msg)
-  }
-
-  return nil
-}
-
-func sendSG(payload *EmailPayload, w http.ResponseWriter) error {
-  return nil
-}
-
+// Create new mailgun object
 func newMailgun() (mailgun.Mailgun, error) {
   domain := os.Getenv("MAILGUN_DOMAIN")
   if domain == "" {
@@ -125,6 +107,56 @@ func newMailgun() (mailgun.Mailgun, error) {
     publicAPIKey,
   )
   return mg, nil
+}
+
+// Send email via mailgun
+func sendMailgun(payload *EmailPayload, w http.ResponseWriter) error {
+  mg, err := newMailgun()
+  if err != nil {
+    msg := fmt.Sprintf("There was an error in setting up the Mailgun connection: %v", err.Error())
+    log.Print(msg)
+    return fmt.Errorf("Mailgun connection failed: %v", msg)
+  }
+
+  msg, id, err := mg.Send(mg.NewMessage(payload.From, payload.Subject, payload.Body, payload.To))
+  if err != nil {
+    msg := fmt.Sprintf("Could not send message: %v, ID %v, %+v", err, id, msg)
+    log.Print(msg)
+    return fmt.Errorf("Mailgun send failed: %v", msg)
+  }
+
+  return nil
+}
+
+// Create a new sendgrid object
+func newSendgrid() (*sendgrid.Client, error) {
+  key := os.Getenv("SENDGRID_KEY")
+  if key == "" {
+    return nil, errors.New("required env var SENDGRID_KEY missing")
+  }
+  sg := sendgrid.NewSendClient(key)
+  return sg, nil
+}
+
+func sendSG(payload *EmailPayload, w http.ResponseWriter) error {
+  sg, err := newSendgrid()
+  if err != nil {
+    msg := fmt.Sprintf("There was an error in setting up the Sendgrid connection: %v", err.Error())
+    log.Print(msg)
+    return fmt.Errorf("Mailgun connection failed: %v", msg)
+  }
+  from := mail.NewEmail(strings.Split(payload.From, "@")[0], payload.From)
+  to := mail.NewEmail(strings.Split(payload.To, "@")[0], payload.To)
+  message := mail.NewSingleEmail(from, payload.Subject, to, payload.Body, payload.Body)
+
+  response, err := sg.Send(message)
+  if err != nil {
+    msg := fmt.Sprintf("Could not send message: %v", response)
+    log.Print(msg)
+    return fmt.Errorf("Sendgrid send failed: %v", msg)
+  }
+
+  return nil
 }
 
 func extractAndValidate(r *http.Request) (*EmailPayload, error) {
@@ -157,9 +189,24 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
   // Attempt MailGun send
   err = sendMailgun(payload, w)
   if err != nil {
-    respondError(w, 400, err)
+    log.Print(fmt.Errorf("Could not send via Mailgun: [%v]. Attempting SendGrid", err.Error()))
+  } else {
+    log.Print("Message sent!")
+    rem := ResponseMessage{Status: "Ok", Body: "Message has been successfully sent."}
+    respondJSON(w, 200, rem)
     return
   }
+
+  err = sendSG(payload, w)
+  if err != nil {
+    log.Print(fmt.Errorf("could not send via sendgun: [%v]. complete failure", err.Error()))
+    respondError(w, 500, err)
+    return
+  }
+  log.Print("Message sent!")
+  rem := ResponseMessage{Status: "Ok", Body: "Message has been successfully sent."}
+  respondJSON(w, 200, rem)
+  return
 
 }
 

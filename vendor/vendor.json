@@ -111,6 +111,24 @@
 			"revisionTime": "2018-01-27T01:58:12Z"
 		},
 		{
+			"checksumSHA1": "1am4FGlEIZUzQmgO3z5ikrHKGnc=",
+			"path": "github.com/sendgrid/rest",
+			"revision": "a44614977dc1c40d4c7cb62caeb3bd145e974e7d",
+			"revisionTime": "2017-12-11T23:24:04Z"
+		},
+		{
+			"checksumSHA1": "0P3K5Qj3F7YQ4e6oVHyef2UFpi8=",
+			"path": "github.com/sendgrid/sendgrid-go",
+			"revision": "0337b42f319971718a41b30894669547cc6414c3",
+			"revisionTime": "2018-01-25T18:17:47Z"
+		},
+		{
+			"checksumSHA1": "umqi64T6UOIS3NLueQsjLjjqbuM=",
+			"path": "github.com/sendgrid/smtpapi-go",
+			"revision": "cf3604db67f421412c13b1e6956b0e5912758187",
+			"revisionTime": "2017-12-21T21:20:03Z"
+		},
+		{
 			"checksumSHA1": "F3JU4T4XXvZTRAcv6rhTao4QGos=",
 			"path": "github.com/spf13/afero",
 			"revision": "bb8f1927f2a9d3ab41c9340aa034f6b803f4359c",
