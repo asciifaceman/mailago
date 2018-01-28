@@ -10,11 +10,11 @@ A very basic insecure mailer API.
 
 ##### Mailgun
 ```
-export MG_API_KEY=your-api-key
-export MG_DOMAIN=your-domain
-export MG_PUBLIC_API_KEY=your-public-key
-export MG_URL="https://api.mailgun.net/v3"
+export MAILGUN_DOMAIN=yourdomain
+export MAILGUN_API_KEY=yourkey
+export MAILGUN_PUB_KEY=yourkey
 ```
+or add to docker-compose.yaml for `make deploy`
 
 ##### Development & Quick Start
 - `make run`
@@ -47,8 +47,22 @@ export MG_URL="https://api.mailgun.net/v3"
 - http://localhost:8080 or see API below for `curl`
 
 ##### API (todo)
+You can utilize `/etc/hosts` to fake an outage:
+- Mailgun
+    - `127.0.0.1    api.mailgun.net`
 - POST
-    - N/A
+    - `/send`
+        - Sends an email using Mailgun, however if an error is met, will attempt Sendgrid.
+        - REQUIRED: `From, To, Subject, Body`
+        - EX: `curl -d '{"From": "tester@mailago.io", "To": "tester@gmail.com"a test email."}' -H "Content-Type: application/json"  -X POST localhost:3031/send`
+    - `/send/mailgun` Deprecated
+        - Utilizes the mailgun API to send an email. Will not retry.
+        - REQUIRED: `From, To, Subject, Body`
+        - EX: `curl -d '{"From": "tester@mailago.io", "To": "tester@gmail.com"a test email."}' -H "Content-Type: application/json"  -X POST localhost:3031/send/mailgun`
+    - `/send/sendgrid` Deprecated
+        - Utilizes the sendgrid API to send an email. Will not retry.
+        - REQUIRED: `From, To, Subject, Body`
+        - EX: `curl -d '{"From": "tester@mailago.io", "To": "tester@gmail.com"a test email."}' -H "Content-Type: application/json"  -X POST localhost:3031/send/sendgrid`
 - GET
     - `/` & `/#/dashboard`
         - Frontend UI (if applicable)

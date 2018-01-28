@@ -105,6 +105,12 @@
 			"revisionTime": "2018-01-18T22:54:55Z"
 		},
 		{
+			"checksumSHA1": "ljd3FhYRJ91cLZz3wsH9BQQ2JbA=",
+			"path": "github.com/pkg/errors",
+			"revision": "30136e27e2ac8d167177e8a583aa4c3fea5be833",
+			"revisionTime": "2018-01-27T01:58:12Z"
+		},
+		{
 			"checksumSHA1": "F3JU4T4XXvZTRAcv6rhTao4QGos=",
 			"path": "github.com/spf13/afero",
 			"revision": "bb8f1927f2a9d3ab41c9340aa034f6b803f4359c",
