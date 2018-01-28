@@ -39,6 +39,28 @@ func formatHostPort(host string, port int) string {
   return fmt.Sprintf("%s:%d", host, port)
 }
 
+// Validate that all the fields are present
+// We want all of them even tho Subject and Body can technically be empty
+func validateEmailInput(email *EmailPayload) error {
+  if email.From == "" {
+    msg := fmt.Errorf("Missing [From] field in payload: %v", email)
+    return msg
+  }
+  if email.To == "" {
+    msg := fmt.Errorf("Missing [To] field in payload: %v", email)
+    return msg
+  }
+  if email.Subject == "" {
+    msg := fmt.Errorf("Missing [Subject] field in payload: %v", email)
+    return msg
+  }
+  if email.Body == "" {
+    msg := fmt.Errorf("Missing [Body] field in payload: %v", email)
+    return msg
+  }
+  return nil
+}
+
 // New returns an instance of Mailago
 func New(host string, port int, staticdir string) *Mailago {
   r := mux.NewRouter()
@@ -79,6 +101,10 @@ func sendMailgun(payload *EmailPayload, w http.ResponseWriter) error {
   return nil
 }
 
+func sendSG(payload *EmailPayload, w http.ResponseWriter) error {
+  return nil
+}
+
 func newMailgun() (mailgun.Mailgun, error) {
   domain := os.Getenv("MAILGUN_DOMAIN")
   if domain == "" {
@@ -101,25 +127,39 @@ func newMailgun() (mailgun.Mailgun, error) {
   return mg, nil
 }
 
-func sendHandler(w http.ResponseWriter, r *http.Request) {
-  // Read the body and set up our payload, validating the data
+func extractAndValidate(r *http.Request) (*EmailPayload, error) {
   defer r.Body.Close()
   body, err := ioutil.ReadAll(r.Body)
   if err != nil {
-    log.Print(err.Error())
+    return nil, err
   }
   payload := &EmailPayload{}
   err = json.Unmarshal(body, payload)
   if err != nil {
-    log.Print(err.Error())
+    return nil, err
   }
   err = validateEmailInput(payload)
+  if err != nil {
+    return nil, err
+  }
+
+  return payload, nil
+}
+
+func sendHandler(w http.ResponseWriter, r *http.Request) {
+  // Read the body and set up our payload, validating the data
+  payload, err := extractAndValidate(r)
+  if err != nil {
+    log.Print(err.Error())
+    respondError(w, 400, err)
+    return
+  }
+  // Attempt MailGun send
+  err = sendMailgun(payload, w)
   if err != nil {
     respondError(w, 400, err)
     return
   }
-
-  // Attempt MailGun send
 
 }
 
@@ -148,32 +188,6 @@ func mailgunHandler(w http.ResponseWriter, r *http.Request) {
   log.Printf("Sent email: %v", payload)
   respondJSON(w, 200, rem)
 
-}
-
-// Validate that all the fields are present
-// We want all of them even tho Subject and Body can technically be empty
-func validateEmailInput(email *EmailPayload) error {
-  if email.From == "" {
-    msg := fmt.Errorf("Missing [From] field in payload: %v", email)
-    log.Print(msg)
-    return msg
-  }
-  if email.To == "" {
-    msg := fmt.Errorf("Missing [To] field in payload: %v", email)
-    log.Print(msg)
-    return msg
-  }
-  if email.Subject == "" {
-    msg := fmt.Errorf("Missing [Subject] field in payload: %v", email)
-    log.Print(msg)
-    return msg
-  }
-  if email.Body == "" {
-    msg := fmt.Errorf("Missing [Body] field in payload: %v", email)
-    log.Print(msg)
-    return msg
-  }
-  return nil
 }
 
 func sendgridHandler(w http.ResponseWriter, r *http.Request) {

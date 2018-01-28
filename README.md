@@ -14,7 +14,15 @@ export MAILGUN_DOMAIN=yourdomain
 export MAILGUN_API_KEY=yourkey
 export MAILGUN_PUB_KEY=yourkey
 ```
-or add to docker-compose.yaml for `make deploy`
+or add to docker-compose.yaml for `make deploy`.
+`personal-docker-compose.yaml` is added to .gitignore so you can `cp docker-compose.yaml personal-docker-compose.yaml` to add your environment variables:
+
+```
+    environment:
+      - MAILGUN_API_KEY=key-
+      - MAILGUN_PUB_KEY=pubkey-
+      - MAILGUN_DOMAIN=sandboxBLAH.mailgun.org
+```
 
 ##### Development & Quick Start
 - `make run`

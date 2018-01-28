@@ -177,6 +177,12 @@
 			"revisionTime": "2017-02-13T15:09:30Z"
 		},
 		{
+			"checksumSHA1": "i8/wrpaNfyc9ewaXOEkjnbbJaQY=",
+			"path": "gopkg.in/sendgrid/sendgrid-go.v2",
+			"revision": "0bf6332788d0230b7da84a1ae68d7531073200e1",
+			"revisionTime": "2015-05-02T04:21:38Z"
+		},
+		{
 			"checksumSHA1": "qOmvuDm+F+2nQQecUZBVkZrTn6Y=",
 			"path": "gopkg.in/yaml.v2",
 			"revision": "d670f9405373e636a5a2765eea47fac0c9bc91a4",
