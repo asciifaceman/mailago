@@ -30,7 +30,7 @@ COLOR_INDENT = \
 
 # Targets
 
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := all
 
 .PHONY: help all frontend buildosx build
 
@@ -41,7 +41,7 @@ COLOR_INDENT = \
 help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//' #thanks githuh.com/prwhite
 
-all: | clean build ## Clean and build osx
+all: | test build ## Clean and build osx
 	@echo "Not building frontend. (in case you don't have npm)"
 
 docker: ## build docker image
@@ -64,7 +64,7 @@ destroy: ## Destroy cluster deployed from this docker compose file.
 	docker-compose down
 
 test: ## run tests
-	go test -v ./...
+	go test github.com/asciifaceman/mailago/mailago --cover
 
 clean: ## clean target directory
 	-rm -r target

@@ -13,6 +13,7 @@ import (
 
   "github.com/gorilla/handlers"
   "github.com/gorilla/mux"
+  "github.com/goware/emailx"
   sendgrid "github.com/sendgrid/sendgrid-go"
   "github.com/sendgrid/sendgrid-go/helpers/mail"
   mailgun "gopkg.in/mailgun/mailgun-go.v1"
@@ -44,22 +45,34 @@ func formatHostPort(host string, port int) string {
 
 // Validate that all the fields are present
 // We want all of them even tho Subject and Body can technically be empty
-func validateEmailInput(email *EmailPayload) error {
+func validateEmailInput(email *EmailPayload) (err error) {
   if email.From == "" {
-    msg := fmt.Errorf("Missing [From] field in payload: %v", email)
-    return msg
+    err = fmt.Errorf("Missing [From] field in payload: %v", email)
+    return
   }
+  err = emailx.Validate(email.From)
+  if err != nil {
+    err = fmt.Errorf("[FROM] Email is not a valid email: %v", email.From)
+    return
+  }
+
   if email.To == "" {
-    msg := fmt.Errorf("Missing [To] field in payload: %v", email)
-    return msg
+    err = fmt.Errorf("Missing [To] field in payload: %v", email)
+    return
   }
+  err = emailx.Validate(email.To)
+  if err != nil {
+    err = fmt.Errorf("[TO] Email is not a valid email: %v", email.To)
+    return
+  }
+
   if email.Subject == "" {
-    msg := fmt.Errorf("Missing [Subject] field in payload: %v", email)
-    return msg
+    err = fmt.Errorf("Missing [Subject] field in payload: %v", email)
+    return
   }
   if email.Body == "" {
-    msg := fmt.Errorf("Missing [Body] field in payload: %v", email)
-    return msg
+    err = fmt.Errorf("Missing [Body] field in payload: %v", email)
+    return
   }
   return nil
 }
@@ -234,11 +247,6 @@ func mailgunHandler(w http.ResponseWriter, r *http.Request) {
   rem := ResponseMessage{Status: "Ok", Body: "Message sent to mailgun."}
   log.Printf("Sent email: %v", payload)
   respondJSON(w, 200, rem)
-
-}
-
-func sendgridHandler(w http.ResponseWriter, r *http.Request) {
-  log.Print("Send from mailgun hit")
 
 }
 
