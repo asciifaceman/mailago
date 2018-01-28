@@ -122,6 +122,7 @@ func newMailgun() (mailgun.Mailgun, error) {
 
 // Send email via mailgun
 func sendMailgun(payload *EmailPayload) error {
+  // Nasty dirty, should keep one mailgun but my Mailago instantiation won't support it
   mg, err := newMailgun()
   if err != nil {
     msg := fmt.Sprintf("There was an error in setting up the Mailgun connection: %v", err.Error())
@@ -150,11 +151,12 @@ func newSendgrid() (*sendgrid.Client, error) {
 }
 
 func sendSG(payload *EmailPayload) error {
+  // Nasty dirty, should keep one send grid but my Mailago instantiation won't support it
   sg, err := newSendgrid()
   if err != nil {
-    msg := fmt.Sprintf("There was an error in setting up the Sendgrid connection: %v", err.Error())
+    msg := fmt.Errorf("There was an error in setting up the Sendgrid connection: %v", err.Error())
     log.Print(msg)
-    return fmt.Errorf("Mailgun connection failed: %v", msg)
+    return msg
   }
   from := mail.NewEmail(strings.Split(payload.From, "@")[0], payload.From)
   to := mail.NewEmail(strings.Split(payload.To, "@")[0], payload.To)
@@ -162,9 +164,9 @@ func sendSG(payload *EmailPayload) error {
 
   response, err := sg.Send(message)
   if err != nil {
-    msg := fmt.Sprintf("Could not send message: %v", response)
+    msg := fmt.Errorf("Could not send message: %v", response)
     log.Print(msg)
-    return fmt.Errorf("Sendgrid send failed: %v", msg)
+    return msg
   }
 
   return nil
@@ -202,8 +204,8 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     log.Print(fmt.Errorf("Could not send via Mailgun: [%v]. Attempting SendGrid", err.Error()))
   } else {
-    log.Print("Message sent!")
     rem := ResponseMessage{Status: "Ok", Body: "Message has been successfully sent."}
+    log.Print(rem)
     respondJSON(w, 200, rem)
     return
   }
