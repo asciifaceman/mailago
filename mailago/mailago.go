@@ -123,7 +123,7 @@ func newMailgun() (mailgun.Mailgun, error) {
 }
 
 // Send email via mailgun
-func sendMailgun(payload *EmailPayload, w http.ResponseWriter) error {
+func sendMailgun(payload *EmailPayload) error {
   mg, err := newMailgun()
   if err != nil {
     msg := fmt.Sprintf("There was an error in setting up the Mailgun connection: %v", err.Error())
@@ -151,7 +151,7 @@ func newSendgrid() (*sendgrid.Client, error) {
   return sg, nil
 }
 
-func sendSG(payload *EmailPayload, w http.ResponseWriter) error {
+func sendSG(payload *EmailPayload) error {
   sg, err := newSendgrid()
   if err != nil {
     msg := fmt.Sprintf("There was an error in setting up the Sendgrid connection: %v", err.Error())
@@ -200,7 +200,7 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
   // Attempt MailGun send
-  err = sendMailgun(payload, w)
+  err = sendMailgun(payload)
   if err != nil {
     log.Print(fmt.Errorf("Could not send via Mailgun: [%v]. Attempting SendGrid", err.Error()))
   } else {
@@ -210,7 +210,7 @@ func sendHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  err = sendSG(payload, w)
+  err = sendSG(payload)
   if err != nil {
     log.Print(fmt.Errorf("could not send via Sendgrid: [%v]. complete failure", err.Error()))
     respondError(w, 500, err)
@@ -239,7 +239,7 @@ func mailgunHandler(w http.ResponseWriter, r *http.Request) {
     respondError(w, 400, err)
     return
   }
-  err = sendMailgun(payload, w)
+  err = sendMailgun(payload)
   if err != nil {
     respondError(w, 400, err)
     return
