@@ -9,20 +9,22 @@ A very basic, naive, insecure mailer API with automatic failover.
 - Frontend development requires `npm` for dependencies and scripts. Not required to use Mailago (just convenient)
 
 ##### Mailgun & Sendgrid
+for `make run`:
+
 ```
 export MAILGUN_DOMAIN=yourdomain
 export MAILGUN_API_KEY=yourkey
 export MAILGUN_PUB_KEY=yourkey
 export SENDGRID_KEY=sendgridapikey
 ```
-or add to docker-compose.yaml for `make deploy`.
-`personal-docker-compose.yaml` is added to .gitignore so you can `cp docker-compose.yaml personal-docker-compose.yaml` to add your environment variables:
+or update docker-compose.yaml for `make deploy`.
 
 ```
     environment:
       - MAILGUN_API_KEY=key-
       - MAILGUN_PUB_KEY=pubkey-
       - MAILGUN_DOMAIN=sandboxBLAH.mailgun.org
+      - SENDGRID_KEY=sendgridapikey
 ```
 
 ##### Development & Quick Start

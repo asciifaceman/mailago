@@ -243,14 +243,19 @@ func sendgridHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-  log.Print("Health hit")
-  rem := ResponseMessage{Status: "Ok", Body: "Server Living."}
-  //mess, err := json.Marshal(rem)
-  //if err != nil {
-  //  http.Error(w, err.Error(), http.StatusInternalServerError)
-  //  return
-  //}
+  log.Print("Health hit. Checking env vars!")
+  _, err := newMailgun()
+  if err != nil {
+    respondError(w, 500, err)
+    return
+  }
+  _, err = newSendgrid()
+  if err != nil {
+    respondError(w, 500, err)
+    return
+  }
 
+  rem := ResponseMessage{Status: "Ok", Body: "Server Living. All required ENV Vars are set."}
   respondJSON(w, 200, rem)
 
 }
